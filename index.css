@@ -1,6 +1,6 @@
-iframe {
-    height:99vh;
-	width: 100%;
-	border: none;
-
+#guess_box
+{
+    position: absolute;
+    top: 10px;  /* adjust value accordingly */
+    left: 10px;  /* adjust value accordingly */
 }

@@ -4,11 +4,17 @@
     <title>Simple Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+ 	<script src="./get_data.js"></script> 
+
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
         height: 100%;
+        
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -19,9 +25,14 @@
     </style>
   </head>
   <body>
+    <div id="guess_box">          
+    	<button onclick='correcter(guess)'>Click me</button>
+	</div>
     <div id="map"></div>
     <script>
     var marker;
+    var guess;
+    var i = 0;
 
       var country = Math.floor((Math.random() * 236) + 1);
       var map;
@@ -111,16 +122,10 @@
 			  }
 			]
         });
-        var layer1 = new google.maps.FusionTablesLayer({
-          query: {
-            select: 'geometry',
-            from: '1tPQ9xXwgQU0M_1fYK6AvFqcgf--31LOWnAy0RVN6',
-            where: "OBJECTID = " + country
-          }
-        });
-        layer1.setMap(map);
         suppressInfoWindows: true
-        console.log(country);
+        console.log(country); //Prints a number
+       	getData(country)
+
 
   var geocoder = new google.maps.Geocoder;
 
@@ -141,14 +146,15 @@ google.maps.event.addListener(map, 'click', function(event) {
       			console.log("Republic of Uganda")
       		}
       		else {
-	      	var country_name = console.log(results[3].address_components.slice(-1)[0].long_name);
-   	       	var guess = results[3].address_components.slice(-1)[0].short_name
-   	       	console.log(guess);
+	      	var country_name = results[3].address_components.slice(-1)[0].long_name;
+   	       	guess = results[3].address_components.slice(-1)[0].short_name
+   	       	console.log(results)
+
    	       }
       	}
       	else{
-        var county_name = console.log(results[0].address_components.slice(-1)[0].long_name);
-       	var guess = console.log(results[0].address_components.slice(-1)[0].short_name)
+        var county_name = results[0].address_components.slice(-1)[0].long_name;
+       	guess = results[0].address_components.slice(-1)[0].short_name
 
       	}
       } else {
@@ -160,6 +166,7 @@ google.maps.event.addListener(map, 'click', function(event) {
   });
 
 });
+
 function placeMarker(location) {
 
  if (marker == null)
@@ -173,7 +180,9 @@ function placeMarker(location) {
 }
 }
     </script>
+
     <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap"
     async defer></script>
+
   </body>
 </html>
