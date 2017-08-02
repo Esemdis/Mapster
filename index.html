@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple Map</title>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+    <title>Carpe Orbis</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="./index.css">
@@ -10,32 +14,39 @@
  	<script src="./get_data.js"></script> 
 
     <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
+    /* #Map måste ha en height för att visas.
+    */
       #map {
         height: 100%;
         
       }
-      /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
+        width: 100%;
         margin: 0;
         padding: 0;
       }
     </style>
   </head>
   <body>
-    <div id="guess_box">          
-    	<button onclick='correcter(guess)'>Click me</button>
-	</div>
-    <div id="map"></div>
+  <div id="wrapper">
+  <div id= "score_box"> 
+  <!-- Poäng -->
+  <p id="score"> 0 points</p>
+  </div>
+    <div id="map">
+    	
+    </div>
+    </div>
     <script>
+    /*Variabler defineras*/
     var marker;
     var guess;
-    var i = 0;
+ 	  var right;
+    var wrong;
 
-      var country = Math.floor((Math.random() * 236) + 1);
       var map;
+      /*Skapar kartan*/
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 35.6967326, lng: 51.2093919},
@@ -43,6 +54,7 @@
         minZoom: 2,
 	    mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: true,
+        /*Ger kartan en style, i detta fall tas all text bort om städer och dylikt.*/
         styles: 
         	[
 			  {
@@ -122,37 +134,44 @@
 			  }
 			]
         });
+        /*Tar bort info fönster som tas upp när man klickar på något*/
         suppressInfoWindows: true
-        console.log(country); //Prints a number
-       	getData(country)
-
-
+        /*Kallar på funktionen randomizer*/
+        randomizer()
+/*Initiatiserar en ny geocoder som används för att tyda lat och lng till städer/länder*/
   var geocoder = new google.maps.Geocoder;
 
 
 google.maps.event.addListener(map, 'click', function(event) {
-
+/*Sätter ut en markör med guess_lat och guess_lng som data för parametrarna lat och lng.*/
 	placeMarker(event.latLng);
 	var Guess_lat = marker.getPosition().lat();
 	var Guess_lng = marker.getPosition().lng();
-    var latlng = {lat: parseFloat(Guess_lat), lng: parseFloat(Guess_lng)};
+    var latlng = {lat: parseFloat(Guess_lat), lng: parseFloat(Guess_lng)
+
+    };
 
 	geocoder.geocode({'location': latlng}, function(results, status) {
+		/*Om man återfår en 200, att status är ok och att all data är korrekt så kollar den...*/
     if (status === 'OK') {
+    	/*... om det finns något i resultat objektet som ligger i 0 (i detta fall så används det för att se om objektet är tomt) och om något finns i 0, så kollar den också om...*/
       if (results[0]) {
+      	/*... om 3 inte är null så går den vidare till ett undantag i koden för ett specifikt land, mer länder kan läggas till här allt eftersom undantag uppkommer*/
       	if (results[3] != null){
+      		/*I detta fall är undantaget Uganda, då det lokala namnet är det som uppkommer som namn i geocoding.*/
       		if (results[3].address_components.slice(-1)[0].long_name == "Jamhuri ya Uganda")
       		{
       			console.log("Republic of Uganda")
       		}
       		else {
+      		/*Som ses på tidigare objekt så används .adress_components[0] för att hämta ut en specifik del av objektet. I dessa fall leder tidigarenämnda metod till landets "långa namn", hela landets namn. Eller landets korta namn, deras två "initialer" GB, SE, NO, FI och så vidare.*/
 	      	var country_name = results[3].address_components.slice(-1)[0].long_name;
    	       	guess = results[3].address_components.slice(-1)[0].short_name
    	       	console.log(results)
-
    	       }
       	}
       	else{
+      		/*Om tidigare if sats inte gav resultat på results[3], då det i Sverige och i vissa fall i Afrikanska länder uppkom postnummer istället för landets namn, så finns denna som backup för namnet på landet.*/
         var county_name = results[0].address_components.slice(-1)[0].long_name;
        	guess = results[0].address_components.slice(-1)[0].short_name
 
@@ -161,7 +180,6 @@ google.maps.event.addListener(map, 'click', function(event) {
         window.alert('No results found');
       }
     } else {
-      window.alert('Geocoder failed due to: ' + status);
     }
   });
 
@@ -171,7 +189,7 @@ function placeMarker(location) {
 
  if (marker == null)
  {
-
+/*Denna funktioner sätter bara ut en markör om det inte redan finns en markör utlagd. Om det finns, så flyttas markören till det nya klicket.*/
    marker = new google.maps.Marker({
       position: location,
       map: map,
@@ -179,9 +197,16 @@ function placeMarker(location) {
 
 }
 }
-    </script>
+</script>
+    <div id="clue">
+    	<div>
+    		<span id="clue_box"></span> <br>
+    	<button type="button" id ='newGame' class="ui-btn" data-icon="check" style="display: none;">Next round!</button>
+    	<button type="button" id ="guessButton"onclick='correcter(guess)' class="ui-btn" data-icon="check" disabled>Make a guess!</button>
+	</div>
+      </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzGL97Yb89BMmqA_3jn_Mn8_hZz7B_Z4Q&callback=initMap"
     async defer></script>
 
   </body>

@@ -1,6 +1,35 @@
-#guess_box
+#score{
+	position: absolute;
+	background-color: red;
+	z-index: 5;
+	margin-top: 5%;
+	font-size: 25px;
+	margin-left: 2%;
+
+}
+#wrapper{
+	height: 100%;
+	width:100%;
+	position: relative
+}
+#clue{
+  position: absolute; 
+  top: 85%;
+  left: 40%;
+  z-index: 5;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+}
+button#guessButton{
+	background-color: #83F52C;
+}
+button#newGame
 {
-    position: absolute;
-    top: 10px;  /* adjust value accordingly */
-    left: 10px;  /* adjust value accordingly */
+	background-color: darkgreen;
+}
+#clue_box
+{
+	color: grey;
+	background-color: black;
+	opacity: 0.9
 }
